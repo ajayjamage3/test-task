@@ -1,5 +1,4 @@
 const {Movie}= require("../models/movies.model");
-const {Rating}= require("../models/ratings.model");
 const express = require("express");
 require("dotenv").config();
 const {Sequelize,DataTypes, sequelize}= require("../config/db")
@@ -13,8 +12,10 @@ movieRoute.get("/v1/longest-duration-movies",async(req,res)=>{
 })
 
 movieRoute.get("/v1/top-rated-movies",async(req,res)=>{
-    let data = await sequelize.query("Select ratings.tconst, movies.primaryTitle, movies.genres,ratings.averageRating from ratings join movies on ratings.tconst = movies.tconst having  ratings.averageRating>6.0 order by ratings.averageRating asc")
-    res.send(data)
+    let data = await sequelize.query(`Select ratings.tconst, movies.primaryTitle, movies.genres,ratings.averageRating from ratings join movies on 
+                ratings.tconst = movies.tconst where 
+                ratings.averageRating>6.0 order by ratings.averageRating desc;`)
+    res.send(data[0])
 })
 
 movieRoute.get("/v1/genre-movies-with-subtotals",async(req,res)=>{
